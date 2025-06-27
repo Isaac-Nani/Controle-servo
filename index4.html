@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Login e Controle do Servo</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      padding: 30px;
+      width: 100%;
+      max-width: 400px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      background: #4285f4;
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 10px;
+      transition: all 0.3s;
+    }
+
+    button:hover {
+      background: #3367d6;
+      transform: translateY(-2px);
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-group button {
+      flex: 1;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    #status {
+      margin-top: 15px;
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+
+  <!-- Firebase v9 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
+
+    // 🔧 Configuração do Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyDYUlCBo_fMNtkX_XRkxGlxbMA_dj-MtrA",
+      authDomain: "my-project-33iot-sm.firebaseapp.com",
+      databaseURL: "https://my-project-33iot-sm-default-rtdb.firebaseio.com",
+      projectId: "my-project-33iot-sm",
+      storageBucket: "my-project-33iot-sm.appspot.com",
+      messagingSenderId: "311768276392",
+      appId: "1:311768276392:web:f4ecb64a377a74eb37d19d"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getDatabase(app);
+
+    // 👤 Login
+    window.fazerLogin = function () {
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+      const erro = document.getElementById("erroLogin");
+
+      signInWithEmailAndPassword(auth, email, senha)
+        .then(() => {
+          document.getElementById("login").classList.add("hidden");
+          document.getElementById("painel").classList.remove("hidden");
+          erro.innerText = "";
+        })
+        .catch((error) => {
+          erro.innerText = "E-mail ou senha inválidos!";
+          console.error(error);
+        });
+    };
+
+    // 🚪 Logout
+    window.sair = function () {
+      signOut(auth).then(() => {
+        document.getElementById("painel").classList.add("hidden");
+        document.getElementById("login").classList.remove("hidden");
+      });
+    };
+
+    // 🔁 Enviar ângulo
+    window.moverServo = function (angulo) {
+      set(ref(db, 'angulo'), angulo)
+        .then(() => {
+          document.getElementById("status").innerText = `Ângulo enviado: ${angulo}°`;
+        })
+        .catch((error) => {
+          document.getElementById("status").innerText = `Erro: ${error.message}`;
+        });
+    };
+  </script>
+</head>
+
+<body>
+  <div id="login" class="card">
+    <h2>Login</h2>
+    <input type="email" id="email" placeholder="E-mail">
+    <input type="password" id="senha" placeholder="Senha">
+    <button onclick="fazerLogin()">Entrar</button>
+    <p id="erroLogin" style="color:red;"></p>
+  </div>
+
+  <div id="painel" class="card hidden">
+    <h2>Controle do Servo</h2>
+    <div class="btn-group">
+      <button onclick="moverServo(0)">0°</button>
+      <button onclick="moverServo(90)">90°</button>
+      <button onclick="moverServo(180)">180°</button>
+    </div>
+    <button onclick="sair()">Sair</button>
+    <p id="status"></p>
+  </div>
+</body>
+</html>
