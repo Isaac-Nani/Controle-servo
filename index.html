@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
   <meta charset="UTF-8">
-  <title>Login e Controle do Servo</title>
+  <title>Login e Controle da Porta</title>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -61,14 +61,26 @@
       flex: 1;
     }
 
-    .hidden {
-      display: none;
+    .status {
+      margin-top: 20px;
+      font-weight: bold;
+      text-align: center;
+      padding: 10px;
+      border-radius: 8px;
     }
 
-    #status {
-      margin-top: 15px;
-      color: green;
-      font-weight: bold;
+    .aberta {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .fechada {
+      background-color: #f8d7da;
+      color: #721c24;
+    }
+
+    .hidden {
+      display: none;
     }
   </style>
 
@@ -78,7 +90,6 @@
     import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
     import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
 
-    // 🔧 Configuração do Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyDYUlCBo_fMNtkX_XRkxGlxbMA_dj-MtrA",
       authDomain: "my-project-33iot-sm.firebaseapp.com",
@@ -93,7 +104,6 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // 👤 Login
     window.fazerLogin = function () {
       const email = document.getElementById("email").value;
       const senha = document.getElementById("senha").value;
@@ -111,22 +121,36 @@
         });
     };
 
-    // 🚪 Logout
     window.sair = function () {
       signOut(auth).then(() => {
         document.getElementById("painel").classList.add("hidden");
         document.getElementById("login").classList.remove("hidden");
+
+        // 🔄 Limpa os campos e status
+        document.getElementById("email").value = "";
+        document.getElementById("senha").value = "";
+        const status = document.getElementById("status");
+        status.innerText = "";
+        status.className = "status";
       });
     };
 
-    // 🔁 Enviar ângulo
     window.moverServo = function (angulo) {
       set(ref(db, 'angulo'), angulo)
         .then(() => {
-          document.getElementById("status").innerText = `Ângulo enviado: ${angulo}°`;
+          const status = document.getElementById("status");
+          if (angulo === 0) {
+            status.innerText = "Porta Aberta";
+            status.className = "status aberta";
+          } else if (angulo === 180) {
+            status.innerText = "Porta Fechada";
+            status.className = "status fechada";
+          }
         })
         .catch((error) => {
-          document.getElementById("status").innerText = `Erro: ${error.message}`;
+          const status = document.getElementById("status");
+          status.innerText = "Erro: " + error.message;
+          status.className = "status fechada";
         });
     };
   </script>
@@ -142,14 +166,13 @@
   </div>
 
   <div id="painel" class="card hidden">
-    <h2>Controle do Servo</h2>
+    <h2>Controle da Porta</h2>
     <div class="btn-group">
-      <button onclick="moverServo(0)">0°</button>
-      <button onclick="moverServo(90)">90°</button>
-      <button onclick="moverServo(180)">180°</button>
+      <button onclick="moverServo(0)">Abrir Porta</button>
+      <button onclick="moverServo(180)">Fechar Porta</button>
     </div>
+    <div id="status" class="status"></div>
     <button onclick="sair()">Sair</button>
-    <p id="status"></p>
   </div>
 </body>
 </html>
