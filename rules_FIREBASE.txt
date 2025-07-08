@@ -1,0 +1,17 @@
+{
+  "rules": {
+    "controles": {
+      "servo": {
+        ".read": "auth != null && root.child('usuarios_autorizados').child(auth.uid).val() === true",
+        ".write": "auth != null && root.child('usuarios_autorizados').child(auth.uid).val() === true"
+      }
+    },
+    "usuarios_autorizados": {
+      "$uid": {
+        ".write": "auth != null && auth.uid === 'Seu_UID_do_Usuario'"
+      }
+    },
+    ".read": false,
+    ".write": false
+  }
+}
