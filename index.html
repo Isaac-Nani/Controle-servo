@@ -84,75 +84,62 @@
     }
   </style>
 
-  <!-- Firebase v9 -->
+  <!-- Firebase imports comentados por segurança -->
+  <!--
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js";
-    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js";
-
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.x.x/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/9.x.x/firebase-auth.js";
+    import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/9.x.x/firebase-database.js";
+  -->
+  <script>
+    // Demonstração apenas — substitua pelos dados reais em ambiente seguro
     const firebaseConfig = {
-      apiKey: "AIzaSyDYUlCBo_fMNtkX_XRkxGlxbMA_dj-MtrA",
-      authDomain: "my-project-33iot-sm.firebaseapp.com",
-      databaseURL: "https://my-project-33iot-sm-default-rtdb.firebaseio.com",
-      projectId: "my-project-33iot-sm",
-      storageBucket: "my-project-33iot-sm.appspot.com",
-      messagingSenderId: "311768276392",
-      appId: "1:311768276392:web:f4ecb64a377a74eb37d19d"
+      apiKey: "YOUR_API_KEY",
+      authDomain: "your-project.firebaseapp.com",
+      databaseURL: "https://your-project.firebaseio.com",
+      projectId: "your-project-id",
+      storageBucket: "your-project.appspot.com",
+      messagingSenderId: "SENDER_ID",
+      appId: "APP_ID"
     };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getDatabase(app);
-
-    window.fazerLogin = function () {
+    // Funções simuladas
+    function fazerLogin() {
       const email = document.getElementById("email").value;
       const senha = document.getElementById("senha").value;
       const erro = document.getElementById("erroLogin");
 
-      signInWithEmailAndPassword(auth, email, senha)
-        .then(() => {
-          document.getElementById("login").classList.add("hidden");
-          document.getElementById("painel").classList.remove("hidden");
-          erro.innerText = "";
-        })
-        .catch((error) => {
-          erro.innerText = "E-mail ou senha inválidos!";
-          console.error(error);
-        });
-    };
+      // Simulação de login (sem autenticação real)
+      if (email === "demo@example.com" && senha === "123456") {
+        document.getElementById("login").classList.add("hidden");
+        document.getElementById("painel").classList.remove("hidden");
+        erro.innerText = "";
+      } else {
+        erro.innerText = "E-mail ou senha inválidos!";
+      }
+    }
 
-    window.sair = function () {
-      signOut(auth).then(() => {
-        document.getElementById("painel").classList.add("hidden");
-        document.getElementById("login").classList.remove("hidden");
+    function sair() {
+      document.getElementById("painel").classList.add("hidden");
+      document.getElementById("login").classList.remove("hidden");
 
-        // 🔄 Limpa os campos e status
-        document.getElementById("email").value = "";
-        document.getElementById("senha").value = "";
-        const status = document.getElementById("status");
-        status.innerText = "";
-        status.className = "status";
-      });
-    };
+      document.getElementById("email").value = "";
+      document.getElementById("senha").value = "";
+      const status = document.getElementById("status");
+      status.innerText = "";
+      status.className = "status";
+    }
 
-    window.moverServo = function (angulo) {
-      set(ref(db, 'angulo'), angulo)
-        .then(() => {
-          const status = document.getElementById("status");
-          if (angulo === 0) {
-            status.innerText = "Porta Aberta";
-            status.className = "status aberta";
-          } else if (angulo === 180) {
-            status.innerText = "Porta Fechada";
-            status.className = "status fechada";
-          }
-        })
-        .catch((error) => {
-          const status = document.getElementById("status");
-          status.innerText = "Erro: " + error.message;
-          status.className = "status fechada";
-        });
-    };
+    function moverServo(angulo) {
+      const status = document.getElementById("status");
+      if (angulo === 0) {
+        status.innerText = "Porta Aberta";
+        status.className = "status aberta";
+      } else if (angulo === 180) {
+        status.innerText = "Porta Fechada";
+        status.className = "status fechada";
+      }
+    }
   </script>
 </head>
 
