@@ -1,0 +1,11 @@
+{
+  "controles": {
+    "servo": {
+      "angulo": 180,
+      "velocidade": 100
+    }
+  },
+  "usuarios_autorizados": {
+    "yPx78GAEzZWHbYlgfbd2vEM9GdC2": true
+}
+}
